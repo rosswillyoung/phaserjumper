@@ -2,9 +2,9 @@ Simple Jumper Game I'm creating to test out Phaser and brush up on JavaScript/Gi
 
 - [x] Add ground and sky
 - [ ] Add platforms
-- [ ] Add Sprite
-- [ ] Jumping and moving mechanism for sprite
-- [ ] Animation frames for sprite
+- [x] Add Sprite
+- [x] Jumping and moving mechanism for sprite
+- [x] Animation frames for sprite
 - [ ] Auto-generate and remove platforms
 - [ ] Set scroll speed higher as time goes on
 - [ ] Power-ups
