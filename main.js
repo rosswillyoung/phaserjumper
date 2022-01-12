@@ -26,6 +26,10 @@ let cursors
 let playerHeight
 let currentHeight = -600
 let lastPlatformHeight = 600
+let numberOfPlatforms = 0
+let scrollSpeed = 0.2
+let loops = 0
+let currentScroll
 
 function preload() {
     this.load.image('sky', 'assets/sky.png')
@@ -99,28 +103,47 @@ function update() {
     }
 
     // Generate Platforms
-
     if (currentHeight < lastPlatformHeight) {
         platform = generatePlatform()
         this.physics.add.collider(player, platform)
+        console.log(platforms)
     }
 
-    currentHeight -= .2
-    console.log(currentHeight, lastPlatformHeight)
-    // move camera up
-    cam.scrollY -= .2
+
+    currentHeight -= scrollSpeed
+    cam.scrollY -= scrollSpeed
+
+
+
+    loops += 1
+    if (loops % 1000 == 0 && cam.scrollY < -1000) {
+        console.log("Updating Scroll Speed")
+        scrollSpeed += 1
+    }
+
+
+
 
 }
 
 function generatePlatform() {
+    // Get random x + y ranges to generate the platform at
     x = Phaser.Math.Between(0, 800)
     y = Phaser.Math.Between(-10, 10)
     platform = platforms.create(x, lastPlatformHeight, 'ground')
     lastPlatformHeight -= 150 + y
-    console.log('platform created', platform.x, platform.y)
+
+    // Ensure that sprite only collides with top of platform so that the sprite can jump up onto it
     platform.body.checkCollision.down = false
     platform.body.checkCollision.right = false
     platform.body.checkCollision.left = false
-    return platform
 
+    // Remove a platform if there are more than 10
+    if (numberOfPlatforms > 10) {
+        platforms.children.entries[0].destroy()
+        console.log('Destroyed platform at ', platforms.children.entries[0].x, platforms.children.entries[0].y)
+    }
+    numberOfPlatforms++
+
+    return platform
 }
