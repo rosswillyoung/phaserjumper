@@ -1,3 +1,5 @@
+
+
 let config = {
     type: Phaser.AUTO,
     width: 800,
@@ -5,7 +7,7 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 },
+            gravity: { y: 600 },
             debug: false
         }
     },
@@ -23,13 +25,16 @@ let stars
 let bombs
 let platforms
 let cursors
-let playerHeight
-let currentHeight = -600
+// let playerHeight
+// let currentHeight = -800
 let lastPlatformHeight = 600
 let numberOfPlatforms = 0
-let scrollSpeed = 0.2
+let scrollSpeed = 0
 let loops = 0
 let currentScroll
+let jumpSpeed = 600
+let gameStart = false
+let cam
 
 function preload() {
     this.load.image('sky', 'assets/sky.png')
@@ -42,6 +47,8 @@ function create() {
     let background = this.add.image(400, 300, 'sky')
     // make background static
     background.setScrollFactor(0)
+
+    cam = this.cameras.main
 
     platforms = this.physics.add.staticGroup()
 
@@ -78,7 +85,13 @@ function create() {
     this.physics.add.collider(player, ground)
 }
 function update() {
-    let cam = this.cameras.main
+
+
+    // Start scrolling if the up key is pressed
+    if (!gameStart && cursors.up.isDown) {
+        gameStart = true
+        scrollSpeed = 1
+    }
 
     // console.log(player.y)
     if (cursors.left.isDown) {
@@ -98,39 +111,42 @@ function update() {
         player.anims.play('turn')
     }
 
-    if (player.body.touching.down) {
-        player.setVelocityY(-330)
+    if (player.body.touching.down && gameStart) {
+        player.setVelocityY(-jumpSpeed)
     }
 
     // Generate Platforms
-    if (currentHeight < lastPlatformHeight) {
+    if (cam.scrollY - 800 < lastPlatformHeight + 100) {
         platform = generatePlatform()
         this.physics.add.collider(player, platform)
         console.log(platforms)
     }
 
-
-    currentHeight -= scrollSpeed
+    // currentHeight -= scrollSpeed
     cam.scrollY -= scrollSpeed
 
 
-
+    // Scroll camera faster over time
     loops += 1
     if (loops % 1000 == 0 && cam.scrollY < -1000) {
         console.log("Updating Scroll Speed")
-        scrollSpeed += 1
+        scrollSpeed += .2
     }
 
-
-
+    // console.log(player.y, cam.scrollY)
+    // Scroll camera faster if player is above a certain point
+    if (player.y < cam.scrollY + 100) {
+        cam.scrollY -= 1
+    }
 
 }
 
 function generatePlatform() {
     // Get random x + y ranges to generate the platform at
-    x = Phaser.Math.Between(0, 800)
+    x = Phaser.Math.Between(50, 750)
     y = Phaser.Math.Between(-10, 10)
     platform = platforms.create(x, lastPlatformHeight, 'ground')
+    platform.setScale(.75, 1).refreshBody()
     lastPlatformHeight -= 150 + y
 
     // Ensure that sprite only collides with top of platform so that the sprite can jump up onto it
@@ -139,9 +155,10 @@ function generatePlatform() {
     platform.body.checkCollision.left = false
 
     // Remove a platform if there are more than 10
-    if (numberOfPlatforms > 10) {
+    if (numberOfPlatforms > 100) {
         platforms.children.entries[0].destroy()
         console.log('Destroyed platform at ', platforms.children.entries[0].x, platforms.children.entries[0].y)
+        numberOfPlatforms--
     }
     numberOfPlatforms++
 

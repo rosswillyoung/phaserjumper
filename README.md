@@ -8,11 +8,16 @@ Simple Jumper Game I'm creating to test out Phaser and brush up on JavaScript/Gi
 - [x] Auto-generate platforms
 - [x] Remove off-screen platforms
 - [x] Collision detection just for top of platform
-- [ ] Scroll speed temporarily higher when player is above a certain height
-    - [ ] Need to keep in mind platform creation
+- [x] Scroll speed temporarily higher when player is above a certain height
+    - [x] Need to keep in mind platform creation
+    - [ ] Higher scroll speed depending on how much higher the player is than the defined height
 - [ ] Update platform creation to be better (more varied height and widths)
+    - [ ] smaller platforms as time goes on
+    - [ ] breakable platforms?
 - [x] Set scroll speed higher as time goes on
+- [x] Game pause until first ^ press
 - [ ] Power-ups
+- [ ] Score (positive scrollY * 10?) 
 - [ ] Shooting mechanism
 - [ ] Enemies
 - [ ] Score
