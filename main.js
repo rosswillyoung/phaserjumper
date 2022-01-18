@@ -25,16 +25,17 @@ let stars
 let bombs
 let platforms
 let cursors
-// let playerHeight
-// let currentHeight = -800
-let lastPlatformHeight = 600
-let numberOfPlatforms = 0
-let scrollSpeed = 0
-let loops = 0
+let lastPlatformHeight
+let numberOfPlatforms
+let scrollSpeed
+let loops
 let currentScroll
-let jumpSpeed = 600
+let jumpSpeed
 let gameStart = false
 let cam
+let score
+let scoreText
+let rt
 
 function preload() {
     this.load.image('sky', 'assets/sky.png')
@@ -43,10 +44,20 @@ function preload() {
 }
 
 function create() {
+
+    lastPlatformHeight = 400
+    numberOfPlatforms = 0
+    scrollSpeed = 0
+    loops = 0
+    jumpSpeed = 600
     // this.physics.world.setBounds(0, 0, 800, 900000)
     let background = this.add.image(400, 300, 'sky')
+    scoreText = this.add.text(10, 10, "Score: 0", { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' })
+    scoreText.setScrollFactor(0)
     // make background static
     background.setScrollFactor(0)
+
+
 
     cam = this.cameras.main
 
@@ -58,7 +69,10 @@ function create() {
 
     player = this.physics.add.sprite(100, 450, 'dude')
     player.setBounce(0.2)
-    // player.setCollideWorldBounds(true)
+
+    //Semi-transparent overlay to show before the game starts
+    rt = this.add.renderTexture(0, 0, config.width, config.height)
+    rt.fill(0x000000, 0.5)
 
     this.anims.create({
         key: 'left',
@@ -86,12 +100,18 @@ function create() {
 }
 function update() {
 
-
     // Start scrolling if the up key is pressed
-    if (!gameStart && cursors.up.isDown) {
-        gameStart = true
-        scrollSpeed = 1
+    if (!gameStart) {
+
+        if (cursors.up.isDown) {
+            gameStart = true
+            scrollSpeed = 1
+            rt.clear()
+        }
     }
+
+    scoreText.setText("Score: " + score)
+    score = parseInt(cam.scrollY * -1)
 
     // console.log(player.y)
     if (cursors.left.isDown) {
@@ -137,8 +157,25 @@ function update() {
     // Scroll camera faster if player is above a certain point
     if (player.y < cam.scrollY + 100) {
         cam.scrollY -= 1
+        if (player.y < cam.scrollY + 50) {
+            cam.scrollY -= 2
+        }
+        if (player.y < cam.scrollY + 25) {
+            cam.scrollY -= 3
+        }
     }
 
+    // 'gameover' functionality
+    if (player.y > cam.scrollY + config.height) {
+        scrollSpeed = 0
+        player.setVelocityY(0)
+        player.setBounce(0)
+        gameStart = false
+        // rt.fill(0x000000, 0.5)
+        if (cursors.up.isDown) {
+            this.scene.restart()
+        }
+    }
 }
 
 function generatePlatform() {
