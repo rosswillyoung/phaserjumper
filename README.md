@@ -14,18 +14,17 @@ Simple Jumper Game I'm creating to test out Phaser and brush up on JavaScript/Gi
 - [ ] Update platform creation to be better (more varied height and widths)
     - [ ] smaller platforms as time goes on
     - [ ] breakable platforms?
-- [ ] GameOver on player below screenheight
+- [x] GameOver on player below screenheight
     - [x] Set scroll speed and player bounce to 0
-    - [ ] GameOver text
-    - [ ] Reset button
+    - [x] GameOver text
+    - [x] Reset button
 - [x] Set scroll speed higher as time goes on
 - [x] Game pause until first ^ press
 - [ ] Power-ups
 - [x] Score (positive scrollY * -1?) 
 - [ ] Shooting mechanism
 - [ ] Enemies
-- [ ] Score
-- [ ] Pre-and-post game scenes/menus
-    - [ ] Overlay on screen pre-game
-    - [ ] Same overlay post-game
+- [x] Pre-and-post game scenes/menus
+    - [x] Overlay on screen pre-game
+    - [x] Same overlay post-game
 - [ ] Create custom artwork and replace default Phaser Art

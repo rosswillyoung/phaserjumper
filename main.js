@@ -35,12 +35,16 @@ let gameStart = false
 let cam
 let score
 let scoreText
+let gameOverText
+let gameStartText
 let rt
+let space
 
 function preload() {
     this.load.image('sky', 'assets/sky.png')
     this.load.image('ground', 'assets/platform.png')
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 })
+    this.load.image('star', 'assets/star.png')
 }
 
 function create() {
@@ -53,11 +57,12 @@ function create() {
     // this.physics.world.setBounds(0, 0, 800, 900000)
     let background = this.add.image(400, 300, 'sky')
     scoreText = this.add.text(10, 10, "Score: 0", { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' })
+
     scoreText.setScrollFactor(0)
     // make background static
     background.setScrollFactor(0)
 
-
+    space = this.input.keyboard.addKey('SPACE')
 
     cam = this.cameras.main
 
@@ -65,14 +70,24 @@ function create() {
 
     let ground = platforms.create(400, 568, 'ground').setScale(2).refreshBody()
 
-
-
     player = this.physics.add.sprite(100, 450, 'dude')
     player.setBounce(0.2)
+
+    stars = this.physics.add.group({
+        key: 'star',
+        repeat: 0,
+        setXY: { x: 900, y: 900 }
+    })
 
     //Semi-transparent overlay to show before the game starts
     rt = this.add.renderTexture(0, 0, config.width, config.height)
     rt.fill(0x000000, 0.5)
+
+    //109 is the width of the gamestarttext (received via console gameStartText.width). Need to convert this to a variable. 
+    gameStartText = this.add.text(config.width / 2, config.height / 2, "Press ^ to Start", { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' })
+    gameStartText.x = config.width / 2 - (gameStartText.width / 2)
+
+
 
     this.anims.create({
         key: 'left',
@@ -104,6 +119,7 @@ function update() {
     if (!gameStart) {
 
         if (cursors.up.isDown) {
+            gameStartText.setVisible(false)
             gameStart = true
             scrollSpeed = 1
             rt.clear()
@@ -131,6 +147,14 @@ function update() {
         player.anims.play('turn')
     }
 
+    // Logic to shoot bullets if space is held down (every 100 ms)
+    if (this.input.keyboard.checkDown(space, 300)) {
+        console.log('space down')
+        let star = stars.create(player.x, player.y, 'star')
+        star.setVelocityX(player.velocityX)
+        star.setVelocityY(-1000)
+    }
+
     if (player.body.touching.down && gameStart) {
         player.setVelocityY(-jumpSpeed)
     }
@@ -140,7 +164,9 @@ function update() {
         platform = generatePlatform()
         this.physics.add.collider(player, platform)
         console.log(platforms)
+
     }
+
 
     // currentHeight -= scrollSpeed
     cam.scrollY -= scrollSpeed
@@ -170,7 +196,15 @@ function update() {
         scrollSpeed = 0
         player.setVelocityY(0)
         player.setBounce(0)
-        gameStart = false
+        if (gameStart) {
+            // set and add gameover text
+            rt = this.add.renderTexture(0, cam.scrollY, config.width, config.height)
+            rt.fill(0x000000, 0.5)
+            gameOverText = this.add.text(config.width / 2, config.height / 2, "Game Over. Press ^ to Restart", { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' })
+            gameOverText.x = config.width / 2 - (gameOverText.width / 2)
+            gameOverText.y = cam.scrollY + (config.height / 2)
+            gameStart = false
+        }
         // rt.fill(0x000000, 0.5)
         if (cursors.up.isDown) {
             this.scene.restart()
