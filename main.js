@@ -39,6 +39,10 @@ let gameOverText
 let gameStartText
 let rt
 let space
+let pointerDownTime = 0
+let allowShoot
+
+
 
 function preload() {
     this.load.image('sky', 'assets/sky.png')
@@ -63,6 +67,7 @@ function create() {
     background.setScrollFactor(0)
 
     space = this.input.keyboard.addKey('SPACE')
+
 
     cam = this.cameras.main
 
@@ -109,7 +114,13 @@ function create() {
         frameRate: 20
     })
 
-    cursors = this.input.keyboard.createCursorKeys()
+    // cursors = this.input.keyboard.createCursorKeys()
+    cursors = this.input.keyboard.addKeys({
+        up: Phaser.Input.Keyboard.KeyCodes.W,
+        down: Phaser.Input.Keyboard.KeyCodes.S,
+        left: Phaser.Input.Keyboard.KeyCodes.A,
+        right: Phaser.Input.Keyboard.KeyCodes.D,
+    })
 
     this.physics.add.collider(player, ground)
 }
@@ -146,15 +157,34 @@ function update() {
         player.setVelocityX(0)
         player.anims.play('turn')
     }
+    // console.log(pointer.downTime)
 
-    // Logic to shoot bullets if space is held down (every 100 ms)
-    if (this.input.keyboard.checkDown(space, 300)) {
-        console.log('space down')
-        let star = stars.create(player.x, player.y, 'star')
-        star.setVelocityX(player.velocityX)
-        star.setVelocityY(-1000)
+    // Logic to shoot bullets if space is held down (every 300 ms)
+
+    if (gameStart && (this.input.keyboard.checkDown(space, 300) || (this.input.activePointer.isDown))) {
+        // this.input.activePointer.getDuration()
+        // console.log(parseInt(this.input.activePointer.getDuration()))
+
+        if (this.input.activePointer.getDuration() > pointerDownTime) {
+            console.log('shoot')
+
+            let star = stars.create(player.x, player.y, 'star')
+
+            star.body.setAllowGravity(false)
+
+            // Calculate the actual Y location of the mouse pointer - even if the game is at y = -10000, game.input.mousePointer only gives
+            // A range between 0 and the game height (800), so we have to add that to cam.scrollY
+            let realY = cam.scrollY + game.input.mousePointer.y
+            this.physics.moveTo(star, game.input.mousePointer.x, realY, 400)
+            pointerDownTime += 300
+        }
+
+    }
+    if (!this.input.activePointer.isDown) {
+        pointerDownTime = 0
     }
 
+    // Auto-Jump
     if (player.body.touching.down && gameStart) {
         player.setVelocityY(-jumpSpeed)
     }
@@ -163,12 +193,11 @@ function update() {
     if (cam.scrollY - 800 < lastPlatformHeight + 100) {
         platform = generatePlatform()
         this.physics.add.collider(player, platform)
-        console.log(platforms)
-
+        // console.log(platforms)
     }
 
 
-    // currentHeight -= scrollSpeed
+    // Scroll logic
     cam.scrollY -= scrollSpeed
 
 
@@ -179,7 +208,6 @@ function update() {
         scrollSpeed += .2
     }
 
-    // console.log(player.y, cam.scrollY)
     // Scroll camera faster if player is above a certain point
     if (player.y < cam.scrollY + 100) {
         cam.scrollY -= 1

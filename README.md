@@ -21,10 +21,21 @@ Simple Jumper Game I'm creating to test out Phaser and brush up on JavaScript/Gi
 - [x] Set scroll speed higher as time goes on
 - [x] Game pause until first ^ press
 - [ ] Power-ups
+    - [ ] faster shooting speed?
+    - [ ] Platform that covers bottom for x seconds
+    - [ ] higher jumping speed
 - [x] Score (positive scrollY * -1?) 
-- [ ] Shooting mechanism
+- [x] Shooting mechanism
+- [x] Add WASD controls
+- [ ] Switch/add pointer down as bullet fire
 - [ ] Enemies
+    - [ ] Spawn Enemies
+    - [ ] Make them 'hover?' (enemy.y = cam.scrollY?)
+    - [ ] plus points on enemy kill and chance at powerup
+    - [ ] logic to "bounce" player off enemy
 - [x] Pre-and-post game scenes/menus
     - [x] Overlay on screen pre-game
     - [x] Same overlay post-game
+- [ ] Convert game into main scene + game start
+- [ ] Scoreboard - figure out way to store previous scores
 - [ ] Create custom artwork and replace default Phaser Art
