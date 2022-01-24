@@ -36,6 +36,10 @@ Simple Jumper Game I'm creating to test out Phaser and brush up on JavaScript/Gi
 - [x] Pre-and-post game scenes/menus
     - [x] Overlay on screen pre-game
     - [x] Same overlay post-game
-- [ ] Convert game into main scene + game start
+- [x] Convert game into main scene + game start
+    - [x] This would require too much re-working as of now. Will finish this game up now that I have learnt the basics and start a new project with proper classes.
 - [ ] Scoreboard - figure out way to store previous scores
 - [ ] Create custom artwork and replace default Phaser Art
+
+
+Pausing updates on this for now. I feel that I've learned a lot from it and would now be better suited learning by working on a new game using OOP 
